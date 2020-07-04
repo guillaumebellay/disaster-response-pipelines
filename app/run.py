@@ -45,13 +45,14 @@ def index():
 
     # Number of messages per category
     categories_labels = df.drop(['id','message','original','genre'],axis=1)\
-                 .sum().sort_values(ascending=True).index
+                 .sum().sort_values(ascending=True)[-10:].index
     categories_counts = df.drop(['id','message','original','genre'],axis=1)\
-                 .sum().sort_values(ascending=True).values
+                 .sum().sort_values(ascending=True)[-10:].values
 
-    # Distribution of messages length(top 10)
-    length_messages = df['message'].str.len().value_counts()[:10].index
-    messages_counts = df['message'].str.len().value_counts()[:10].values
+    # Distribution of messages length (below 200 words)
+    mask = df['message'].str.len() < 200
+    length_messages = df['message'][mask].str.len().value_counts().index
+    messages_counts = df['message'][mask].str.len().value_counts().values
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -84,7 +85,7 @@ def index():
             ],
 
             'layout': {
-                'title': 'Number of messages per category',
+                'title': 'Number of messages per category (Top 10)',
                 
                 'xaxis': {
                     'title': "Count"
@@ -101,7 +102,7 @@ def index():
             ],
 
             'layout': {
-                'title': 'Messages length (Top 10)',
+                'title': 'Messages length (below 200 words)',
                 'yaxis': {
                     'title': "Count"
                 },
